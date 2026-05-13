@@ -28,5 +28,45 @@
     "priority": "P2",
     "status": "pending_approval",
     "created_at": "2026-05-13T04:07:19.912448+00:00"
+  },
+  {
+    "request_id": "AR-1004",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T10:41:25.753015+00:00"
+  },
+  {
+    "request_id": "AR-1005",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T10:43:30.640448+00:00"
+  },
+  {
+    "request_id": "AR-1006",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T10:43:54.404079+00:00"
+  },
+  {
+    "request_id": "AR-1007",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T10:44:11.409401+00:00"
   }
 ]

@@ -38,7 +38,7 @@ def show_table(title: str, filename: str) -> None:
         return
 
     df = pd.DataFrame(data)
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")
 
 
 def count_records(filename: str) -> int:
@@ -56,31 +56,8 @@ def count_records(filename: str) -> int:
 def show_chatbot() -> None:
     st.subheader("IT Support Chatbot")
     st.caption(
-        "Ask an IT support question. The agent will search internal docs, call tools, "
-        "create local actions, and return an explainable answer."
+        "Ask an IT support question. The agent can search internal docs, call tools, create mock actions, and return an explainable answer."
     )
-
-    example_queries = [
-        "I cannot access the finance portal from home. VPN is connected, but the finance site says access denied. I need it before payroll closes today.",
-        "My VPN is not connecting. I already restarted my laptop and I need urgent access to internal systems.",
-        "Can you install Docker Desktop on my laptop? I need it for development work.",
-        "I received an email saying my password will expire today. It says urgent action required and asks me to click here to reset password. Is this safe?",
-        "My laptop is very slow and keeps freezing during meetings.",
-    ]
-
-    selected_example = st.selectbox(
-        "Try a demo query",
-        [""] + example_queries,
-        index=0,
-    )
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        use_example = st.button("Use selected example", use_container_width=True)
-
-    with col2:
-        clear_chat = st.button("Clear chat", use_container_width=True)
 
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = [
@@ -88,38 +65,71 @@ def show_chatbot() -> None:
                 "role": "assistant",
                 "content": (
                     "Hi, I am your Local Enterprise IT Support Copilot. "
-                    "Ask me about VPN, Finance Portal access, software requests, phishing emails, or laptop performance."
+                    "Ask me about VPN, Finance Portal access, software installation, "
+                    "phishing emails, or laptop performance."
                 ),
+                "trace": None,
             }
         ]
 
-    if clear_chat:
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        example = st.selectbox(
+            "Try a demo query",
+            [
+                "",
+                "I cannot connect to VPN from home. Please help me troubleshoot.",
+                "I need access to the Finance Portal for payroll processing.",
+                "I received a suspicious password reset email. Is this phishing?",
+                "Can you install Docker Desktop on my laptop? I need it for development work.",
+                "My laptop is running very slowly after the latest update.",
+            ],
+            label_visibility="visible",
+        )
+
+    with col2:
+        st.write("")
+        st.write("")
+        if st.button("Use selected example", width="stretch", disabled=not example):
+            st.session_state.pending_prompt = example
+            st.rerun()
+
+    if st.button("Clear chat", width="stretch"):
         st.session_state.chat_messages = [
             {
                 "role": "assistant",
-                "content": "Chat cleared. What IT issue can I help you with?",
+                "content": (
+                    "Hi, I am your Local Enterprise IT Support Copilot. "
+                    "Ask me about VPN, Finance Portal access, software installation, "
+                    "phishing emails, or laptop performance."
+                ),
+                "trace": None,
             }
         ]
         st.rerun()
 
-    for message in st.session_state.chat_messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    st.divider()
 
-            if message.get("metadata"):
+    # Render history first
+    for msg in st.session_state.chat_messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+            if msg.get("trace"):
                 with st.expander("Agent trace"):
-                    st.json(message["metadata"])
+                    st.json(msg["trace"])
 
     prompt = st.chat_input("Describe your IT issue...")
 
-    if use_example and selected_example:
-        prompt = selected_example
+    if "pending_prompt" in st.session_state:
+        prompt = st.session_state.pop("pending_prompt")
 
     if prompt:
         st.session_state.chat_messages.append(
             {
                 "role": "user",
                 "content": prompt,
+                "trace": None,
             }
         )
 
@@ -127,54 +137,68 @@ def show_chatbot() -> None:
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("Agent is searching docs and running tools..."):
+            with st.spinner("Agent is analyzing your request..."):
                 try:
                     result = handle_user_query(prompt)
 
                     final_answer = result.get(
                         "final_answer",
-                        "I processed the request, but no final answer was returned.",
+                        "I processed your request, but no final response was generated.",
                     )
 
-                    metadata = {
+                    trace = {
                         "run_id": result.get("run_id"),
                         "retrieved_documents": result.get("retrieved_documents", []),
                         "tools_called": result.get("tools_called", []),
-                        "tool_results": result.get("tool_results", []),
+                        "actions_created": result.get("actions_created", []),
                     }
 
                     st.markdown(final_answer)
 
-                    with st.expander("Agent trace"):
-                        st.json(metadata)
+                    if trace["retrieved_documents"] or trace["tools_called"] or trace["actions_created"]:
+                        with st.expander("Agent trace"):
+                            st.json(trace)
 
                     st.session_state.chat_messages.append(
                         {
                             "role": "assistant",
                             "content": final_answer,
-                            "metadata": metadata,
+                            "trace": trace,
                         }
                     )
 
-                    st.success(
-                        "Action completed. Refresh the dashboard tabs to see updated tickets, requests, emails, and audit logs."
+                    if trace["actions_created"]:
+                        st.success(
+                            "Action completed. Refresh the dashboard tabs to see updated tickets, requests, emails, and audit logs."
+                        )
+
+                except Exception as e:
+                    import traceback
+
+                    tb = traceback.format_exc()
+                    error_message = (
+                        "Sorry, I could not process that request. "
+                        "Please check the terminal logs or try a more specific IT support query."
                     )
 
-                except Exception as exc:
-                    error_message = (
-                        "Sorry, the agent failed while processing this request. "
-                        f"Error: `{exc}`"
-                    )
                     st.error(error_message)
+
+                    with st.expander("Debug traceback"):
+                        st.code(tb, language="text")
+
+                    print("\n===== CHATBOT ERROR TRACEBACK =====")
+                    print(tb)
+                    print("===== END CHATBOT ERROR TRACEBACK =====\n")
 
                     st.session_state.chat_messages.append(
                         {
                             "role": "assistant",
                             "content": error_message,
+                            "trace": {"error": str(e)},
                         }
                     )
 
-
+        st.rerun()
 def show_knowledge_base() -> None:
     st.subheader("Knowledge Base Documents")
 
