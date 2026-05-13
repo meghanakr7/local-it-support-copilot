@@ -46,6 +46,76 @@ Rules:
 import re
 import uuid
 from typing import Any
+
+import json
+import os
+import uuid
+from functools import lru_cache
+from typing import Any
+
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+@lru_cache(maxsize=500)
+def fast_ai_gate_cached(message: str) -> str:
+    """
+    One lightweight AI call.
+    It either returns a casual response directly,
+    or tells the app to run the full IT support agent.
+    Cached so repeated messages like 'hi' become instant.
+    """
+
+    response = client.responses.create(
+        model=os.getenv("OPENAI_FAST_MODEL", "gpt-4o-mini"),
+        input=[
+            {
+                "role": "system",
+                "content": (
+                    "You are the fast front-desk layer for a Local Enterprise IT Support Copilot. "
+                    "Decide whether the user's message is casual conversation or a real IT support request. "
+                    "If it is casual conversation, answer naturally and briefly. "
+                    "If it is an IT support request, do not answer it; mark it for the full IT agent. "
+                    "Do not invent names. "
+                    "Do not mention Finance Portal, VPN, tickets, tools, documents, or incidents unless the user asks about them. "
+                    "Return only valid JSON."
+                ),
+            },
+            {
+                "role": "user",
+                "content": message,
+            },
+        ],
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "fast_gate_result",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "route": {
+                            "type": "string",
+                            "enum": ["casual_chat", "it_agent"],
+                        },
+                        "answer": {
+                            "type": "string",
+                        },
+                    },
+                    "required": ["route", "answer"],
+                },
+                "strict": True,
+            }
+        },
+    )
+
+    return response.output_text
+
+
+def fast_ai_gate(message: str) -> dict[str, Any]:
+    normalized_message = " ".join(message.strip().split()).lower()
+    return json.loads(fast_ai_gate_cached(normalized_message))
 def route_user_message_with_ai(message: str) -> dict[str, Any]:
     """
     Uses OpenAI to decide whether the user is casually chatting
@@ -773,6 +843,21 @@ def handle_user_query(prompt: str) -> dict[str, Any]:
             "actions_created": [],
         }
 
+
+    gate = fast_ai_gate(prompt)
+
+    if gate["route"] == "casual_chat":
+        return {
+            "run_id": f"RUN-{uuid.uuid4().hex[:8]}",
+            "intent": "casual_chat",
+            "final_answer": gate["answer"],
+            "retrieved_documents": [],
+            "tools_called": [],
+            "actions_created": [],
+        }
+
+    # Existing full IT agent logic continues below this line.
+
     route = route_user_message_with_ai(prompt)
 
     if route["intent"] == "casual_chat":
@@ -782,7 +867,7 @@ def handle_user_query(prompt: str) -> dict[str, Any]:
     # Do not change your IT workflows below.
 
     # Existing full RAG/tool agent logic continues here.
-
+    user_query = prompt
     route = route_user_query(user_query)
 
     if route == "finance_portal_access":

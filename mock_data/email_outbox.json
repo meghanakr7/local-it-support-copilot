@@ -118,5 +118,13 @@
     "body": "Access request AR-1010 and ticket IT-1014 were created for user u1001.",
     "status": "queued_mock",
     "created_at": "2026-05-13T10:54:32.637095+00:00"
+  },
+  {
+    "email_id": "EMAIL-1016",
+    "to": "finance-systems@example.local",
+    "subject": "P2 Finance Portal access request",
+    "body": "Access request AR-1011 and ticket IT-1015 were created for user u1001.",
+    "status": "queued_mock",
+    "created_at": "2026-05-13T11:20:58.862722+00:00"
   }
 ]
