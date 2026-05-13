@@ -1,0 +1,37 @@
+{
+  "u1001": {
+    "name": "Alex Morgan",
+    "department": "Finance",
+    "role": "Payroll Analyst",
+    "account_status": "active",
+    "device_id": "LAP-1029",
+    "application_roles": {
+      "finance_portal": [
+        "FINANCE_VIEWER"
+      ],
+      "hr_system": []
+    }
+  },
+  "u1002": {
+    "name": "Priya Shah",
+    "department": "Engineering",
+    "role": "Software Engineer",
+    "account_status": "active",
+    "device_id": "LAP-2031",
+    "application_roles": {
+      "finance_portal": [],
+      "hr_system": []
+    }
+  },
+  "u1003": {
+    "name": "Jordan Lee",
+    "department": "Sales",
+    "role": "Account Executive",
+    "account_status": "locked",
+    "device_id": "LAP-3012",
+    "application_roles": {
+      "finance_portal": [],
+      "hr_system": []
+    }
+  }
+}

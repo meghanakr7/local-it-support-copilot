@@ -1,0 +1,20 @@
+{
+  "LAP-1029": {
+    "owner_user_id": "u1001",
+    "cpu_usage": 92,
+    "memory_usage": 87,
+    "disk_free_gb": 4,
+    "battery_health": "poor",
+    "os_updates_pending": true,
+    "device_age_years": 4
+  },
+  "LAP-2031": {
+    "owner_user_id": "u1002",
+    "cpu_usage": 34,
+    "memory_usage": 55,
+    "disk_free_gb": 128,
+    "battery_health": "good",
+    "os_updates_pending": false,
+    "device_age_years": 1
+  }
+}

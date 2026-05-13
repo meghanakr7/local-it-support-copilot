@@ -1,0 +1,24 @@
+{
+  "finance_portal": {
+    "application_name": "Finance Portal",
+    "status": "online",
+    "business_critical": true,
+    "owner_team": "Finance Systems",
+    "required_roles": [
+      "FINANCE_VIEWER",
+      "FINANCE_APPROVER",
+      "FINANCE_PAYROLL",
+      "FINANCE_ADMIN"
+    ]
+  },
+  "hr_system": {
+    "application_name": "HR System",
+    "status": "online",
+    "business_critical": true,
+    "owner_team": "HR Systems",
+    "required_roles": [
+      "HR_VIEWER",
+      "HR_ADMIN"
+    ]
+  }
+}

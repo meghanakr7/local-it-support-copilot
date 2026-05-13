@@ -1,0 +1,34 @@
+{
+  "Docker Desktop": {
+    "approved": true,
+    "allowed_roles": [
+      "Software Engineer",
+      "DevOps Engineer",
+      "QA Engineer"
+    ],
+    "requires_manual_approval": false
+  },
+  "VS Code": {
+    "approved": true,
+    "allowed_roles": [
+      "Software Engineer",
+      "DevOps Engineer",
+      "QA Engineer",
+      "Data Analyst"
+    ],
+    "requires_manual_approval": false
+  },
+  "Figma": {
+    "approved": true,
+    "allowed_roles": [
+      "Product Designer",
+      "Product Manager"
+    ],
+    "requires_manual_approval": false
+  },
+  "UnknownTool": {
+    "approved": false,
+    "allowed_roles": [],
+    "requires_manual_approval": true
+  }
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "request_id": "SW-1001",
+    "user_id": "u1002",
+    "software_name": "Docker Desktop",
+    "device_id": "LAP-2031",
+    "business_justification": "User needs software for development work.",
+    "approval_status": "pre_approved",
+    "status": "requested",
+    "created_at": "2026-05-13T04:07:31.485125+00:00"
+  }
+]

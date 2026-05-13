@@ -1,0 +1,32 @@
+[
+  {
+    "request_id": "AR-1001",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T01:57:10.637867+00:00"
+  },
+  {
+    "request_id": "AR-1002",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T04:04:43.410027+00:00"
+  },
+  {
+    "request_id": "AR-1003",
+    "user_id": "u1001",
+    "application_id": "finance_portal",
+    "requested_role": "FINANCE_PAYROLL",
+    "business_justification": "User needs payroll access before payroll deadline.",
+    "priority": "P2",
+    "status": "pending_approval",
+    "created_at": "2026-05-13T04:07:19.912448+00:00"
+  }
+]

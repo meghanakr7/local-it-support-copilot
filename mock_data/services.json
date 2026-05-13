@@ -1,0 +1,23 @@
+{
+  "vpn": {
+    "service_name": "Corporate VPN",
+    "status": "healthy",
+    "affected_users": 0,
+    "last_checked": "2026-05-12T09:00:00",
+    "estimated_resolution": null
+  },
+  "vpn_degraded_demo": {
+    "service_name": "Corporate VPN",
+    "status": "degraded",
+    "affected_users": 42,
+    "last_checked": "2026-05-12T09:00:00",
+    "estimated_resolution": "30 minutes"
+  },
+  "identity_provider": {
+    "service_name": "Single Sign-On",
+    "status": "healthy",
+    "affected_users": 0,
+    "last_checked": "2026-05-12T09:00:00",
+    "estimated_resolution": null
+  }
+}
