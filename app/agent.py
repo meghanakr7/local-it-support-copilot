@@ -19,7 +19,12 @@ from app.tools import (
     send_mock_email_notification,
     write_audit_log,
 )
+from openai import OpenAI
+import os
+import uuid
+from typing import Any
 
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SYSTEM_PROMPT = """
 You are a local enterprise IT support copilot.
@@ -38,7 +43,172 @@ Rules:
 - Be concise, professional, and explain what action was taken.
 - If a support ticket, access request, software request, or security incident was created, include its ID.
 """
+import re
+import uuid
+from typing import Any
+def route_user_message_with_ai(message: str) -> dict[str, Any]:
+    """
+    Uses OpenAI to decide whether the user is casually chatting
+    or asking for an IT support action.
+    """
 
+    response = client.responses.create(
+        model=os.getenv("OPENAI_ROUTER_MODEL", "gpt-4o-mini"),
+        input=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an intent router for an enterprise IT support chatbot. "
+                    "Classify the user's message. "
+                    "If the user is greeting you, asking how you are, asking who you are, "
+                    "saying thanks, or making casual conversation, classify it as casual_chat. "
+                    "If the user is reporting an IT problem or requesting an IT action, classify it as it_request. "
+                    "Do not over-classify casual messages as IT issues."
+                ),
+            },
+            {
+                "role": "user",
+                "content": message,
+            },
+        ],
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "intent_route",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "intent": {
+                            "type": "string",
+                            "enum": [
+                                "casual_chat",
+                                "it_request",
+                            ],
+                        },
+                        "confidence": {
+                            "type": "number",
+                        },
+                        "reason": {
+                            "type": "string",
+                        },
+                    },
+                    "required": ["intent", "confidence", "reason"],
+                },
+                "strict": True,
+            }
+        },
+    )
+
+    import json
+    return json.loads(response.output_text)
+
+def answer_casual_chat_with_ai(message: str) -> dict[str, Any]:
+    """
+    Uses OpenAI to respond naturally when the user is not asking for an IT action.
+    No RAG. No tools. No tickets. No audit logs.
+    """
+
+    response = client.responses.create(
+        model=os.getenv("OPENAI_CHAT_MODEL", "gpt-4o-mini"),
+        input=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a friendly Local Enterprise IT Support Copilot. "
+                    "Respond naturally like a helpful assistant. "
+                    "Keep the response short. "
+                    "Do not invent the user's name. "
+                    "Do not mention Finance Portal, VPN, tickets, incidents, or tools unless the user asks about them. "
+                    "If appropriate, briefly say you can help with IT support topics."
+                ),
+            },
+            {
+                "role": "user",
+                "content": message,
+            },
+        ],
+    )
+
+    return {
+        "run_id": f"RUN-{uuid.uuid4().hex[:8]}",
+        "intent": "casual_chat",
+        "final_answer": response.output_text,
+        "retrieved_documents": [],
+        "tools_called": [],
+        "actions_created": [],
+    }
+
+
+
+def classify_user_intent(message: str) -> str:
+    """
+    Lightweight intent router before running expensive RAG/tools.
+
+    Returns:
+        greeting
+        phishing
+        vpn
+        access_request
+        software_request
+        laptop_performance
+        general_it
+    """
+    text = message.strip().lower()
+
+    if not text:
+        return "empty"
+
+    # Very short conversational inputs should not trigger RAG/tools.
+    if len(text.split()) <= 3:
+        greeting_like_words = [
+            "hi",
+            "hello",
+            "hey",
+            "yo",
+            "good morning",
+            "good afternoon",
+            "good evening",
+            "how are you",
+            "who are you",
+            "help",
+        ]
+
+        if any(word in text for word in greeting_like_words):
+            return "greeting"
+
+    # Intent routing for real IT issues.
+    if any(term in text for term in ["phishing", "suspicious email", "password reset", "unknown sender", "click link"]):
+        return "phishing"
+
+    if any(term in text for term in ["vpn", "cannot connect", "remote access", "network"]):
+        return "vpn"
+
+    if any(term in text for term in ["access", "permission", "role", "finance portal", "payroll"]):
+        return "access_request"
+
+    if any(term in text for term in ["install", "software", "docker", "adobe", "application"]):
+        return "software_request"
+
+    if any(term in text for term in ["slow", "laptop", "performance", "crash", "freezing"]):
+        return "laptop_performance"
+
+    return "general_it"
+
+
+def build_intro_response() -> dict[str, Any]:
+    return {
+        "run_id": f"RUN-{uuid.uuid4().hex[:8]}",
+        "final_answer": (
+            "Hi, I am your Local Enterprise IT Support Copilot. "
+            "I can help with VPN issues, Finance Portal access, software installation requests, "
+            "suspicious emails, laptop performance problems, and support ticket creation.\n\n"
+            "Please describe the IT issue you are facing."
+        ),
+        "retrieved_documents": [],
+        "tools_called": [],
+        "actions_created": [],
+    }
 
 def _run_id() -> str:
     return f"RUN-{uuid4().hex[:8]}"
@@ -590,7 +760,29 @@ def route_user_query(user_query: str) -> str:
     return "finance_portal_access"
 
 
-def handle_user_query(user_query: str) -> dict:
+def handle_user_query(prompt: str) -> dict[str, Any]:
+    prompt = prompt.strip()
+
+    if not prompt:
+        return {
+            "run_id": f"RUN-{uuid.uuid4().hex[:8]}",
+            "intent": "empty",
+            "final_answer": "Please type a message so I can help.",
+            "retrieved_documents": [],
+            "tools_called": [],
+            "actions_created": [],
+        }
+
+    route = route_user_message_with_ai(prompt)
+
+    if route["intent"] == "casual_chat":
+        return answer_casual_chat_with_ai(prompt)
+
+    # Existing RAG + tool logic starts only after this point.
+    # Do not change your IT workflows below.
+
+    # Existing full RAG/tool agent logic continues here.
+
     route = route_user_query(user_query)
 
     if route == "finance_portal_access":
