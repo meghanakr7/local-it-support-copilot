@@ -163,5 +163,49 @@
     "assigned_team": "Finance Systems",
     "status": "open",
     "created_at": "2026-05-13T11:20:58.861766+00:00"
+  },
+  {
+    "ticket_id": "IT-1016",
+    "user_id": "u1001",
+    "category": "Finance Portal Access",
+    "priority": "P2",
+    "summary": "Finance portal payroll access blocked",
+    "details": "User can reach the Finance Portal, account is active, but user does not have FINANCE_PAYROLL role required for payroll processing.",
+    "assigned_team": "Finance Systems",
+    "status": "open",
+    "created_at": "2026-05-13T11:27:07.660879+00:00"
+  },
+  {
+    "ticket_id": "IT-1017",
+    "user_id": "u1001",
+    "category": "Finance Portal Access",
+    "priority": "P2",
+    "summary": "Finance portal payroll access blocked",
+    "details": "User can reach the Finance Portal, account is active, but user does not have FINANCE_PAYROLL role required for payroll processing.",
+    "assigned_team": "Finance Systems",
+    "status": "open",
+    "created_at": "2026-05-13T11:31:11.296242+00:00"
+  },
+  {
+    "ticket_id": "IT-1018",
+    "user_id": "u1001",
+    "category": "Finance Portal Access",
+    "priority": "P2",
+    "summary": "Finance portal payroll access blocked",
+    "details": "User can reach the Finance Portal, account is active, but user does not have FINANCE_PAYROLL role required for payroll processing.",
+    "assigned_team": "Finance Systems",
+    "status": "open",
+    "created_at": "2026-05-13T11:31:56.775840+00:00"
+  },
+  {
+    "ticket_id": "IT-1019",
+    "user_id": "u1001",
+    "category": "Finance Portal Access",
+    "priority": "P2",
+    "summary": "Finance portal payroll access blocked",
+    "details": "User can reach the Finance Portal, account is active, but user does not have FINANCE_PAYROLL role required for payroll processing.",
+    "assigned_team": "Finance Systems",
+    "status": "open",
+    "created_at": "2026-05-13T11:34:50.875393+00:00"
   }
 ]

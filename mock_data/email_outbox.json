@@ -126,5 +126,37 @@
     "body": "Access request AR-1011 and ticket IT-1015 were created for user u1001.",
     "status": "queued_mock",
     "created_at": "2026-05-13T11:20:58.862722+00:00"
+  },
+  {
+    "email_id": "EMAIL-1017",
+    "to": "finance-systems@example.local",
+    "subject": "P2 Finance Portal access request",
+    "body": "Access request AR-1012 and ticket IT-1016 were created for user u1001.",
+    "status": "queued_mock",
+    "created_at": "2026-05-13T11:27:07.663324+00:00"
+  },
+  {
+    "email_id": "EMAIL-1018",
+    "to": "finance-systems@example.local",
+    "subject": "P2 Finance Portal access request",
+    "body": "Access request AR-1013 and ticket IT-1017 were created for user u1001.",
+    "status": "queued_mock",
+    "created_at": "2026-05-13T11:31:11.297751+00:00"
+  },
+  {
+    "email_id": "EMAIL-1019",
+    "to": "finance-systems@example.local",
+    "subject": "P2 Finance Portal access request",
+    "body": "Access request AR-1014 and ticket IT-1018 were created for user u1001.",
+    "status": "queued_mock",
+    "created_at": "2026-05-13T11:31:56.776445+00:00"
+  },
+  {
+    "email_id": "EMAIL-1020",
+    "to": "finance-systems@example.local",
+    "subject": "P2 Finance Portal access request",
+    "body": "Access request AR-1015 and ticket IT-1019 were created for user u1001.",
+    "status": "queued_mock",
+    "created_at": "2026-05-13T11:34:50.877559+00:00"
   }
 ]
